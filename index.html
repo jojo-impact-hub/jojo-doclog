@@ -1116,7 +1116,7 @@
         <div class="rec" style="${r.status==='draft' ? 'border-left:3px solid #f59e0b; opacity:.9;' : ''}">
           <div class="rec-top">
             <div class="rec-tags">
-              <span class="tag tag-date">📅 ${esc(fmtDate(r.date))}${r.time ? ' ' + r.time : ''}</span>
+              <span class="tag tag-date">📅 ${esc(fmtDate(r.date))}${fmtPeriod(r.time) ? ' ' + fmtPeriod(r.time) : ''}</span>
               ${r.status === 'draft' ? '<span class="tag" style="background:#fef3c7; color:#92400e; border-color:#fcd34d;">⏳ 待寄</span>' : ''}
               ${r.type   ? `<span class="tag tag-type">${esc(r.type)}</span>` : ''}
               ${r.method ? `<span class="tag tag-method">${esc(r.method)}</span>` : ''}
@@ -1242,8 +1242,8 @@
     const docType = rec.type || '文件';
     document.getElementById('m_email_subject').value = `【產學合作/${docType}】寄送通知`;
     const vendorDisplay = formatVendor(rec.company, rec.contact);
-    const dateFormatted = (rec.date || '').replace(/-/g, '/');
-    const timeStr = rec.time || '';
+    const dateFormatted = fmtDate(rec.date).replace(/-/g, '/');
+    const timeStr = fmtPeriod(rec.time);
     const dateTimePart = dateFormatted
       ? (timeStr ? `已於 ${dateFormatted}，${timeStr}，` : `已於 ${dateFormatted}，`)
       : '';
@@ -1292,12 +1292,24 @@ ${infoLines.join('\n')}
     return d;
   }
 
+  // 把時段正規化成 上午/下午/晚間（修掉舊資料把時段存成原始時間的情況）
+  function fmtPeriod(t) {
+    if (!t) return '';
+    if (t === '上午' || t === '下午' || t === '晚間') return t;
+    const dt = new Date(t);
+    if (!isNaN(dt)) {
+      const h = dt.getHours();
+      return h < 12 ? '上午' : h < 18 ? '下午' : '晚間';
+    }
+    return '';
+  }
+
   function bodyToHtml(text) {
     const escaped = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     const linked  = escaped.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1">$1</a>');
     // \n → <br>：OWA 等客戶端會吃掉 white-space:pre-wrap，改用 <br> 才不會跑版
     const withBreaks = linked.replace(/\n/g, '<br>');
-    return '<div style="font-family:sans-serif;font-size:14px;line-height:1.8;white-space:pre-wrap;">' + withBreaks + '</div>';
+    return '<div style="font-family:sans-serif;font-size:14px;line-height:1.5;white-space:pre-wrap;">' + withBreaks + '</div>';
   }
 
   async function copyBodyHtml(text) {
