@@ -1270,7 +1270,11 @@ ${infoLines.join('\n')}
 為利貴單位先行辦理內部行政作業，隨信檢附本次${docType}掃描檔供參。惟相關請款、核銷或撥款作業，仍請以後續寄達之${docType}正本為準。${attachSection}
 
 如正本文件送達後有任何疑問，或需補充其他資料，敬請隨時與我聯繫。
-謝謝您。`;
+謝謝您。
+
+──────────
+東海大學　胡瑋菱
+電話：04-2359-0121 分機 21306`;
     const isDraft = rec.status === 'draft';
     document.getElementById('btn-confirm-sent').style.display = isDraft ? '' : 'none';
     document.getElementById('btn-confirm-sent').disabled = false;
@@ -1308,7 +1312,9 @@ ${infoLines.join('\n')}
     const escaped = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     const linked  = escaped.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1">$1</a>');
     // \n → <br>：OWA 等客戶端會吃掉 white-space:pre-wrap，改用 <br> 才不會跑版
-    const withBreaks = linked.replace(/\n/g, '<br>');
+    // 多個空行收成單行，避免 OWA 把 <br><br> 撐成大段距
+    const compact = linked.replace(/\n{2,}/g, '\n');
+    const withBreaks = compact.replace(/\n/g, '<br>');
     return '<div style="font-family:sans-serif;font-size:14px;line-height:1.5;white-space:pre-wrap;">' + withBreaks + '</div>';
   }
 
