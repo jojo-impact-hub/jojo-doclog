@@ -1116,7 +1116,7 @@
         <div class="rec" style="${r.status==='draft' ? 'border-left:3px solid #f59e0b; opacity:.9;' : ''}">
           <div class="rec-top">
             <div class="rec-tags">
-              <span class="tag tag-date">📅 ${esc(r.date)}${r.time ? ' ' + r.time : ''}</span>
+              <span class="tag tag-date">📅 ${esc(fmtDate(r.date))}${r.time ? ' ' + r.time : ''}</span>
               ${r.status === 'draft' ? '<span class="tag" style="background:#fef3c7; color:#92400e; border-color:#fcd34d;">⏳ 待寄</span>' : ''}
               ${r.type   ? `<span class="tag tag-type">${esc(r.type)}</span>` : ''}
               ${r.method ? `<span class="tag tag-method">${esc(r.method)}</span>` : ''}
